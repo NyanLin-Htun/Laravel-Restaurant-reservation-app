@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\TableStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TableStoreRequest;
 use App\Models\Table;
@@ -16,8 +17,8 @@ class TableController extends Controller
      */
     public function index()
     {
-        $tabledatas = Table::all();
-        return view('admin.tables.index', compact('tabledatas'));
+        $tables = Table::all();
+        return view('admin.tables.index', compact('tables'));
     }
 
     /**
@@ -44,8 +45,8 @@ class TableController extends Controller
             'status' => $request->status,
             'location' => $request->location
         ]);
-
-        return view('admin.tables.index')->with('success' , 'Table created successfully.');
+        return redirect('admin/tables')->with('success' , 'Table created successfully.');
+        //return view('admin.tables.index')->with('success' , 'Table created successfully.');
     }
 
     /**
@@ -80,7 +81,9 @@ class TableController extends Controller
     public function update(TableStoreRequest $request, Table $table)
     {
         $table->update($request->validated());
-        return view('admin.tables.index')->with('success' , 'Table updated successfully.');
+
+
+        return to_route('admin.tables.index')->with('success' , 'Table updated successfully.');
     }
 
     /**
@@ -93,7 +96,7 @@ class TableController extends Controller
     {
         $table->reservation()->delete();
         $table->delete();
-        return view('admin.tables.index')->with('danger' , 'Table deleted successfully.');
+        return to_route('admin.tables.index')->with('danger' , 'Table deleted successfully.');
 
     }
 }

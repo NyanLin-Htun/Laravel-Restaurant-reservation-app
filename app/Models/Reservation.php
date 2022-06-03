@@ -23,7 +23,7 @@ class Reservation extends Model
         'res_date'
     ];
 
-    public function table()
+    public function tables()
     {
         return $this->belongsTo(Table::class);
     }

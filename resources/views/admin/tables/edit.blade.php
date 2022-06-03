@@ -51,7 +51,7 @@
                         <div class="mt-1">
                           <select id="location" name="location" class="form-multiselect block w-full mt-1">
                             @foreach (App\Enums\TableLocation::cases() as $location)
-                            <option value="{{ $location->value }}">{{ $location->name }}</option>
+                            <option value="{{ $location->value }}" @selected($table->location->value == $location->value)>{{ $location->name }}</option>
                             @endforeach
                           </select>  
                         </div>
