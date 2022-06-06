@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Menu;
+use App\Observers\MenuObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -14,6 +16,10 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<class-string, array<int, class-string>>
      */
+    protected $observers = [
+        Menu::class => [MenuObserver::class],
+    ];
+
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
@@ -27,8 +33,10 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Menu::observe(MenuObserver::class);
     }
+
+   
 
     /**
      * Determine if events and listeners should be automatically discovered.
