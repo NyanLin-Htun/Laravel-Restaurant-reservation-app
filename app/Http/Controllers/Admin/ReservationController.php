@@ -75,9 +75,10 @@ class ReservationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Reservation $reservation)
     {
-        //
+        $tables = Table::where('status', TableStatus::Avaliable)->get();
+        return view('admin.reservations.edit',compact('reservation' , 'tables'));
     }
 
     /**
@@ -87,9 +88,23 @@ class ReservationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ReservationStoreRequest $request,Reservation $reservation)
     {
-        //
+        $table = Table::findOrFail($request->table_id);
+        if($request->guest_number > $table->guest_number){
+            return back()->with('warning','Please choose the table base on guests');
+        }
+
+        $request_date = Carbon::parse($request->res_date);
+        $reservations = $table->reservations()->where('id','!=', $reservation->id)->get();
+        foreach($reservations as $res){
+            if($res->res_date->format('Y-m-d') == $request_date->format('Y-m-d')){
+            return back()->with('warning','This Table is reserved for this date');
+            }
+        }
+        $reservation->update($request->validated());
+        return to_route('admin.reservations.index')->with('success' , 'Reservation updated successfully.');
+
     }
 
     /**
@@ -98,8 +113,10 @@ class ReservationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Reservation $reservation)
     {
-        //
+        $reservation->delete();
+        return to_route('admin.reservations.index')->with('warning' , 'Reservation deleted successfully.');
+
     }
 }
